@@ -1,0 +1,25 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress-php
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    # this should be covered by the annotation on the other ingress
+    # since it will renew the same certificate
+    # cert-manager.io/cluster-issuer: letsencrypt-prod
+    ingress.kubernetes.io/configuration-snippet: |
+        rewrite ^/(.*)$ http://taa.codestar.vn/$1 permanent;
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: "taa.codestar.vn"
+    http:
+      paths:
+      - pathType: Prefix
+        path: "/"
+        backend:
+          service:
+            name: taa-svc
+            port:
+              number: 80
+
